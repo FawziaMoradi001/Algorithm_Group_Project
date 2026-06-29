@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSC4202 Group Project - Flood Relief Supply Optimizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0f1a;
+            --surface: #111827;            --surface2: #1a2332;
+            --border: #2a3a52;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --accent: #38bdf8;
+            --accent2: #818cf8;
+            --accent3: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .hero {
+            background: linear-gradient(135deg, #0c1929 0%, #1a1040 50%, #0d2137 100%);
+            padding: 80px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(56,189,248,0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(129,140,248,0.06) 0%, transparent 50%);
+            animation: drift 20s ease-in-out infinite;
+        }
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 10px); }
+        }
+        .hero h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .hero .subtitle {
+            font-size: 1.2em;
+            color: var(--text-dim);
+            position: relative;
+        }
+        .hero .course {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 24px;
+            border: 1px solid var(--accent);
+            border-radius: 999px;
+            color: var(--accent);
+            font-size: 0.9em;
+            font-weight: 500;
+            position: relative;
+        }
+        nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            max-width: 1100px;
+            margin: 0 auto;
+            overflow-x: auto;
+            gap: 0;
+        }
+        nav a {
+            display: block;
+            padding: 16px 18px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: color 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+        nav a:hover, nav a.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        section {
+            margin: 50px 0;
+            padding: 40px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        h2 {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        h2 .num {
+            background: var(--accent);
+            color: var(--bg);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.7em;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin: 28px 0 12px;
+            color: var(--accent2);
+        }
+        p { margin-bottom: 16px; color: var(--text); }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .card h4 {
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--accent3);
+        }
+        .card p { font-size: 0.9em; color: var(--text-dim); margin-bottom: 0; }
+        pre {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.82em;
+            line-height: 1.6;
+            color: #c9d1d9;
+            margin: 16px 0;
+        }
+        .keyword { color: #ff7b72; }
+        .type { color: #79c0ff; }
+        .string { color: #a5d6ff; }
+        .comment { color: #8b949e; font-style: italic; }
+        .func { color: #d2a8ff; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+        th {
+            background: var(--surface2);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        tr:hover { background: rgba(56,189,248,0.03); }
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+        .tag-yes { background: rgba(52,211,153,0.15); color: var(--accent3); }
+        .tag-no { background: rgba(248,113,113,0.15); color: var(--danger); }
+        .tag-dp { background: rgba(56,189,248,0.15); color: var(--accent); }
+        .highlight-box {
+            background: rgba(56,189,248,0.08);
+            border-left: 3px solid var(--accent);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        .formula {
+            background: var(--surface2);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.1em;
+            color: var(--warning);
+            margin: 16px 0;
+            border: 1px solid var(--border);
+        }
+        .output-box {
+            background: #000;
+            color: #00ff41;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78em;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 16px 0;
+            white-space: pre;
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-dim);
+            font-size: 0.85em;
+            border-top: 1px solid var(--border);
+        }
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .member {
+            text-align: center;
+            padding: 24px;
+            background: var(--surface2);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .member .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            object-fit: cover;
+            border: 3px solid var(--accent);
+        }
+        .member .name { font-weight: 600; }
+        .member .role { font-size: 0.85em; color: var(--text-dim); }
+        .flowchart {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .flowchart .step {
+            background: var(--surface2);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            text-align: center;
+        }
+        .flowchart .arrow { color: var(--accent); font-size: 1.4em; }
+        .reflection-quote {
+            background: var(--surface2);
+            border-left: 3px solid var(--accent2);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+            font-style: italic;
+            color: var(--text-dim);
+        }
+        .reflection-quote .quote-author {
+            display: block;
+            margin-top: 8px;
+            font-style: normal;
+            font-weight: 600;
+            color: var(--accent3);
+            font-size: 0.9em;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+            margin: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent);
+            opacity: 0.4;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        .timeline-item .week-label {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        .timeline-item p {
+            margin-bottom: 0;
+            font-size: 0.95em;
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8em; }
+            section { padding: 24px 16px; }
+            nav a { padding: 12px 10px; font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Flood Relief Supply Allocation Optimizer</h1>
+    <p class="subtitle">Kuala Krai, Kelantan &mdash; Dynamic Programming for Disaster Response</p>
+    <span class="course">CSC4202 &middot; Design and Analysis of Algorithm &middot; Sem 2 2025/2026</span>
+</div>
+
+<nav>
+    <ul>
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#paradigm">Algorithm Paradigm</a></li>
+        <li><a href="#pseudocode">Pseudocode</a></li>
+        <li><a href="#comparison">Comparison</a></li>
+        <li><a href="#solution">Final Solution</a></li>
+        <li><a href="#implementation">Implementation</a></li>
+        <li><a href="#output">Output Demo</a></li>
+        <li><a href="#analysis">Analysis</a></li>
+        <li><a href="#reflection">Reflection</a></li>
+        <li><a href="#team">Team</a></li>
+    </ul>
+</nav>
+
+<main>
+
+<!-- SECTION 1: Problem -->
+<section id="problem">
+    <h2><span class="num">01</span> Problem Illustration</h2>
+    
+    <h3>Scenario: The 2014-Inspired Kelantan Flood Crisis</h3>
+    <p>
+        Kuala Krai, a district in Kelantan, Malaysia, is one of the most flood-prone regions in Southeast Asia. 
+        During the catastrophic 2014 monsoon season, floodwaters reached unprecedented levels, displacing over 200,000 people 
+        and devastating villages along the Kelantan River. The disaster exposed critical weaknesses in supply logistics — 
+        with limited transport capacity, relief agencies faced impossible choices about which supplies to send first.
+    </p>
+
+    <h3>The Optimization Challenge</h3>
+    <p>
+        A relief truck with a <strong>1,000 kg capacity</strong> is dispatched from the Kuala Krai coordination center. 
+        There are <strong>20 different supply packages</strong> available, each with a specific weight and 
+        <strong>relief value score</strong> (calculated from population impact, urgency, and medical necessity). 
+        The total weight of all packages (1,515 kg) exceeds the truck's capacity — so we cannot take everything.
+    </p>
+
+    <div class="highlight-box">
+        <strong>Goal:</strong> Maximize the total relief value delivered to affected villages (Kg. Manek Urai, Kg. Dabong, 
+        Kg. Bertam, Kg. Laloh) within the truck's weight constraint of 1,000 kg.
+    </div>
+
+    <h3>Why Finding the Optimal Solution Matters</h3>
+    <div class="card-grid">
+        <div class="card">
+            <h4>Lives at Stake</h4>
+            <p>Suboptimal allocation means critical medical supplies or clean water may be left behind, directly risking lives in isolated villages.</p>
+        </div>
+        <div class="card">
+            <h4>Resource Scarcity</h4>
+            <p>During disasters, transport vehicles and fuel are extremely limited. Each trip must deliver maximum impact.</p>
+        </div>
+        <div class="card">
+            <h4>Time Pressure</h4>
+            <p>Flood victims face dehydration and disease within 48 hours. An optimal algorithm ensures fast, correct decisions under pressure.</p>
+        </div>
+    </div>
+
+    <h3>Supply Data</h3>
+    <table>
+        <tr><th>#</th><th>Supply Package</th><th>Weight (kg)</th><th>Relief Value</th><th>Category</th><th>Target Village</th></tr>
+        <tr><td>1</td><td>Rice (50kg sacks x4)</td><td>200</td><td>85</td><td>Food</td><td>Kg. Manek Urai</td></tr>
+        <tr><td>2</td><td>Drinking Water (20L x10)</td><td>200</td><td>90</td><td>Water</td><td>Kg. Manek Urai</td></tr>
+        <tr><td>3</td><td>Medical Kit (Large)</td><td>50</td><td>95</td><td>Medical</td><td>Kg. Dabong</td></tr>
+        <tr><td>4</td><td>Baby Formula & Diapers</td><td>30</td><td>80</td><td>Baby Care</td><td>Kg. Dabong</td></tr>
+        <tr><td>5</td><td>Blankets & Sleeping Bags x20</td><td>60</td><td>55</td><td>Shelter</td><td>Kg. Bertam</td></tr>
+        <tr><td>6</td><td>Portable Water Purifier</td><td>25</td><td>88</td><td>Water</td><td>Kg. Bertam</td></tr>
+        <tr><td>7</td><td>Canned Food (mixed box)</td><td>150</td><td>70</td><td>Food</td><td>Kg. Manek Urai</td></tr>
+        <tr><td>8</td><td>Tarpaulin Sheets x10</td><td>80</td><td>60</td><td>Shelter</td><td>Kg. Laloh</td></tr>
+        <tr><td>9</td><td>Generator (small portable)</td><td>120</td><td>65</td><td>Equipment</td><td>Kg. Laloh</td></tr>
+        <tr><td>10</td><td>Antibiotics & First Aid</td><td>20</td><td>92</td><td>Medical</td><td>Kg. Dabong</td></tr>
+        <tr><td>11</td><td>Hygiene Kits x30</td><td>45</td><td>58</td><td>Hygiene</td><td>Kg. Bertam</td></tr>
+        <tr><td>12</td><td>Instant Noodles (bulk)</td><td>100</td><td>50</td><td>Food</td><td>Kg. Laloh</td></tr>
+        <tr><td>13</td><td>Mosquito Nets x40</td><td>35</td><td>72</td><td>Health</td><td>Kg. Manek Urai</td></tr>
+        <tr><td>14</td><td>Clothing Packs (assorted)</td><td>70</td><td>40</td><td>Clothing</td><td>Kg. Bertam</td></tr>
+        <tr><td>15</td><td>Cooking Equipment Set</td><td>90</td><td>45</td><td>Equipment</td><td>Kg. Laloh</td></tr>
+        <tr><td>16</td><td>Oral Rehydration Salts x100</td><td>15</td><td>78</td><td>Medical</td><td>Kg. Dabong</td></tr>
+        <tr><td>17</td><td>Solar Lanterns x20</td><td>40</td><td>52</td><td>Equipment</td><td>Kg. Manek Urai</td></tr>
+        <tr><td>18</td><td>Infant Medicine Kit</td><td>10</td><td>82</td><td>Medical</td><td>Kg. Dabong</td></tr>
+        <tr><td>19</td><td>Rubber Boats (inflatable x2)</td><td>160</td><td>68</td><td>Rescue</td><td>Kg. Laloh</td></tr>
+        <tr><td>20</td><td>Communication Radio Set</td><td>15</td><td>75</td><td>Communication</td><td>Kg. Dabong</td></tr>
+    </table>
+    <p>Total available weight: 1,515 kg &middot; Total value: 1,400 &middot; Truck capacity: 1,000 kg</p>
+</section>
+
+<!-- SECTION 2: Algorithm Paradigm -->
+<section id="paradigm">
+    <h2><span class="num">02</span> Algorithm Paradigm</h2>
+    
+    <h3>Why Dynamic Programming?</h3>
+    <p>
+        This problem is a classic <strong>0/1 Knapsack Problem</strong>: each supply package is either loaded (1) or left behind (0), 
+        and we must maximize total relief value without exceeding the weight capacity. Dynamic Programming is the ideal paradigm because 
+        it exhibits both <strong>optimal substructure</strong> and <strong>overlapping subproblems</strong>.
+    </p>
+
+    <h3>Optimal Substructure</h3>
+    <p>
+        The optimal solution for n items with capacity W contains the optimal solution for (n-1) items. 
+        If item i is included, the remaining items must be optimally selected for capacity (W - weight_i).
+    </p>
+
+    <h3>Overlapping Subproblems</h3>
+    <p>
+        When deciding for each item whether to include or exclude it, many subproblems dp[i][w] are computed repeatedly in a naive 
+        recursive approach. DP stores these in a table, computing each only once.
+    </p>
+
+    <h3>Recurrence Relation</h3>
+    <div class="formula">
+        dp[i][w] = max( dp[i-1][w] , value[i] + dp[i-1][w - weight[i]] )
+    </div>
+    <p>
+        For each item i and capacity w, we take the maximum of two choices: (1) exclude item i and keep the value from 
+        the previous items, or (2) include item i and add its value to the optimal solution for the remaining capacity.
+    </p>
+
+    <h3>Optimization Function</h3>
+    <div class="formula">
+        maximize &sum; (value_i &times; x_i) &nbsp;&nbsp; subject to &nbsp;&nbsp; &sum; (weight_i &times; x_i) &le; W, &nbsp; x_i &isin; {0, 1}
+    </div>
+
+    <h3>Base Case</h3>
+    <div class="highlight-box">
+        dp[0][w] = 0 for all w &ge; 0 &nbsp;&mdash;&nbsp; With zero items, the maximum value is zero regardless of capacity.
+    </div>
+</section>
+
+<!-- SECTION 3: Pseudocode -->
+<section id="pseudocode">
+    <h2><span class="num">03</span> Pseudocode</h2>
+
+    <pre><span class="comment">// 0/1 Knapsack - Bottom-Up Dynamic Programming</span>
+<span class="comment">// Input:  packages[] of (weight, value), capacity W</span>
+<span class="comment">// Output: maximum relief value and selected items</span>
+
+<span class="keyword">FUNCTION</span> <span class="func">SolveKnapsack</span>(packages[], n, W):
+    <span class="comment">// Create DP table of size (n+1) x (W+1)</span>
+    <span class="keyword">CREATE</span> dp[0..n][0..W] initialized to 0
+
+    <span class="comment">// Fill table bottom-up</span>
+    <span class="keyword">FOR</span> i = 1 <span class="keyword">TO</span> n:
+        <span class="keyword">FOR</span> w = 0 <span class="keyword">TO</span> W:
+            <span class="comment">// Option 1: Don't include item i</span>
+            dp[i][w] = dp[i-1][w]
+
+            <span class="comment">// Option 2: Include item i (if it fits)</span>
+            <span class="keyword">IF</span> packages[i].weight &le; w:
+                includeVal = packages[i].value + dp[i-1][w - packages[i].weight]
+                dp[i][w] = <span class="func">MAX</span>(dp[i][w], includeVal)
+
+    <span class="keyword">RETURN</span> dp[n][W]  <span class="comment">// optimal value</span>
+
+
+<span class="keyword">FUNCTION</span> <span class="func">Traceback</span>(dp[][], packages[], n, W):
+    selected = empty list
+    w = W
+
+    <span class="keyword">FOR</span> i = n <span class="keyword">DOWNTO</span> 1:
+        <span class="keyword">IF</span> dp[i][w] &ne; dp[i-1][w]:
+            <span class="comment">// Item i was included in optimal solution</span>
+            <span class="func">ADD</span> i to selected
+            w = w - packages[i].weight
+
+    <span class="keyword">RETURN</span> <span class="func">REVERSE</span>(selected)</pre>
+
+    <h3>Algorithm Flow</h3>
+    <div class="flowchart">
+        <div class="step">Input Supply<br>Data</div>
+        <span class="arrow">&rarr;</span>
+        <div class="step">Build DP<br>Table O(nW)</div>
+        <span class="arrow">&rarr;</span>
+        <div class="step">Find Optimal<br>Value dp[n][W]</div>
+        <span class="arrow">&rarr;</span>
+        <div class="step">Traceback<br>Selected Items</div>
+        <span class="arrow">&rarr;</span>
+        <div class="step">Output Optimal<br>Allocation</div>
+    </div>
+</section>
+
+<!-- SECTION 4: Comparison -->
+<section id="comparison">
+    <h2><span class="num">04</span> Algorithm Comparison</h2>
+    
+    <p>We reviewed five major algorithm paradigms for suitability to this problem:</p>
+
+    <table>
+        <tr>
+            <th>Paradigm</th>
+            <th>Strengths</th>
+            <th>Weaknesses</th>
+            <th>Suitable?</th>
+        </tr>
+        <tr>
+            <td><strong>Sorting</strong></td>
+            <td>Simple, fast O(n log n). Good for ordering items by priority.</td>
+            <td>Sorting alone doesn't solve the constraint optimization. Only helps as a preprocessing step.</td>
+            <td><span class="tag tag-no">Insufficient</span></td>
+        </tr>
+        <tr>
+            <td><strong>Divide & Conquer</strong></td>
+            <td>Breaks problem into subproblems. Works well for problems like merge sort, binary search.</td>
+            <td>Subproblems overlap heavily in knapsack; D&C recomputes them, leading to O(2^n) without memoization.</td>
+            <td><span class="tag tag-no">Inefficient</span></td>
+        </tr>
+        <tr>
+            <td><strong>Dynamic Programming</strong></td>
+            <td>Guarantees optimal solution. Handles overlapping subproblems via tabulation. Pseudo-polynomial O(nW).</td>
+            <td>Space O(nW) can be large for very high capacity values. Not truly polynomial (pseudo-polynomial).</td>
+            <td><span class="tag tag-dp">SELECTED</span></td>
+        </tr>
+        <tr>
+            <td><strong>Greedy</strong></td>
+            <td>Fast O(n log n). Simple to implement. Optimal for fractional knapsack.</td>
+            <td>NOT optimal for 0/1 knapsack. May miss better combinations. Our test shows it missed 5 value points.</td>
+            <td><span class="tag tag-no">Not Optimal</span></td>
+        </tr>
+        <tr>
+            <td><strong>Graph Algorithms</strong></td>
+            <td>Excellent for network/routing problems (shortest path, MST).</td>
+            <td>Problem lacks graph structure (no edges/nodes). Would require artificial graph construction with no benefit.</td>
+            <td><span class="tag tag-no">Unsuitable</span></td>
+        </tr>
+    </table>
+
+    <div class="highlight-box">
+        <strong>Conclusion:</strong> Dynamic Programming is the most suitable paradigm. It guarantees optimality, 
+        handles the constraint naturally via the DP table, and runs in O(nW) time — fast enough for real-time disaster response.
+    </div>
+</section>
+
+<!-- SECTION 5: Chosen Approach -->
+<section id="solution">
+    <h2><span class="num">05</span> Chosen Approach: Dynamic Programming</h2>
+
+    <div class="highlight-box">
+        <strong>Final Selected Solution:</strong> After evaluating all five algorithm paradigms &mdash; Sorting, Divide &amp; Conquer, 
+        Dynamic Programming, Greedy, and Graph Algorithms &mdash; we selected <strong>Dynamic Programming (Bottom-Up Tabulation)</strong> 
+        as the final solution for the flood relief supply allocation problem.
+    </div>
+
+    <h3>Why Dynamic Programming is the Final Selected Solution</h3>
+    <p>
+        Dynamic Programming is chosen because it is the only paradigm that satisfies all three critical requirements 
+        of our disaster relief scenario: <strong>guaranteed optimality</strong> (every value point matters when lives are at stake), 
+        <strong>practical efficiency</strong> (O(nW) runs in milliseconds for real-world input sizes), and 
+        <strong>traceback capability</strong> (we can identify exactly which supply packages to load, not just the total value).
+    </p>
+
+    <h3>How It Solves the Problem</h3>
+    <p>
+        The algorithm constructs a 2D table of size (n+1) &times; (W+1), where n = 20 items and W = 1,000 kg. Each cell dp[i][w] 
+        stores the maximum relief value achievable using the first i items with a capacity limit of w kg. The table is filled 
+        bottom-up using the recurrence relation, and the final answer is found at dp[20][1000]. A traceback through the table 
+        then recovers the exact set of selected packages.
+    </p>
+
+    <h3>Final Solution Summary</h3>
+    <table>
+        <tr><th>Property</th><th>Detail</th></tr>
+        <tr><td><strong>Algorithm</strong></td><td>0/1 Knapsack via Bottom-Up Dynamic Programming</td></tr>
+        <tr><td><strong>Time Complexity</strong></td><td>&Theta;(nW) = &Theta;(20 &times; 1000) = 20,000 operations</td></tr>
+        <tr><td><strong>Space Complexity</strong></td><td>&Theta;(nW) for the DP table</td></tr>
+        <tr><td><strong>Optimality</strong></td><td>Guaranteed &mdash; proven correct by mathematical induction</td></tr>
+        <tr><td><strong>Result</strong></td><td>Relief Value 1162, using 995/1000 kg (99.5% truck utilisation)</td></tr>
+        <tr><td><strong>Items Selected</strong></td><td>16 out of 20 packages</td></tr>
+        <tr><td><strong>Execution Time</strong></td><td>6.917 ms &mdash; suitable for real-time disaster response</td></tr>
+    </table>
+
+    <div class="highlight-box">
+        <strong>Conclusion:</strong> Dynamic Programming is the final selected solution. It delivers the proven optimal allocation 
+        in under 7 milliseconds, ensuring that every kilogram of truck capacity is used to maximise relief impact for the 
+        flood-affected villages of Kuala Krai.
+    </div>
+</section>
+
+<!-- SECTION 6: Implementation -->
+<section id="implementation">
+    <h2><span class="num">06</span> Java Implementation</h2>
+    
+    <p>The complete Java program implements three algorithms for comparison: DP (primary), Greedy, and Brute Force.</p>
+
+    <h3>Core DP Method</h3>
+    <pre><span class="keyword">public static int</span>[][] <span class="func">solveKnapsack</span>(<span class="type">SupplyPackage</span>[] packages, <span class="keyword">int</span> capacity) {
+    <span class="keyword">int</span> n = packages.length;
+    <span class="keyword">int</span>[][] dp = <span class="keyword">new int</span>[n + 1][capacity + 1];
+
+    <span class="comment">// Base case: dp[0][w] = 0 for all w (no items = no value)</span>
+
+    <span class="comment">// Fill the DP table bottom-up</span>
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = 1; i &lt;= n; i++) {
+        <span class="keyword">for</span> (<span class="keyword">int</span> w = 0; w &lt;= capacity; w++) {
+            dp[i][w] = dp[i - 1][w];  <span class="comment">// exclude item i</span>
+
+            <span class="keyword">if</span> (packages[i - 1].weight &lt;= w) {
+                <span class="keyword">int</span> includeValue = packages[i - 1].reliefValue
+                    + dp[i - 1][w - packages[i - 1].weight];
+                dp[i][w] = <span class="type">Math</span>.<span class="func">max</span>(dp[i][w], includeValue);
+            }
+        }
+    }
+    <span class="keyword">return</span> dp;
+}</pre>
+
+    <h3>Traceback Method</h3>
+    <pre><span class="keyword">public static</span> <span class="type">List</span>&lt;<span class="type">Integer</span>&gt; <span class="func">traceback</span>(<span class="keyword">int</span>[][] dp, <span class="type">SupplyPackage</span>[] packages, <span class="keyword">int</span> capacity) {
+    <span class="type">List</span>&lt;<span class="type">Integer</span>&gt; selected = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;();
+    <span class="keyword">int</span> n = packages.length;
+    <span class="keyword">int</span> w = capacity;
+
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = n; i &gt; 0; i--) {
+        <span class="keyword">if</span> (dp[i][w] != dp[i - 1][w]) {
+            selected.<span class="func">add</span>(i - 1);
+            w -= packages[i - 1].weight;
+        }
+    }
+    <span class="type">Collections</span>.<span class="func">reverse</span>(selected);
+    <span class="keyword">return</span> selected;
+}</pre>
+</section>
+
+<!-- SECTION 7: Output -->
+<section id="output">
+    <h2><span class="num">07</span> Program Output Demo</h2>
+    
+    <p>The program was compiled and executed with <code>javac FloodReliefOptimizer.java && java FloodReliefOptimizer</code>. Below are the key results:</p>
+
+    <h3>Optimal DP Solution</h3>
+    <div class="output-box">DYNAMIC PROGRAMMING (OPTIMAL) SOLUTION
+===================================================================
+Supply Package                 | Weight |    Value | Category
+-------------------------------------------------------------------
+Drinking Water (20L x10)       |  200 kg | Value:  90 | Water
+Medical Kit (Large)            |   50 kg | Value:  95 | Medical
+Baby Formula & Diapers         |   30 kg | Value:  80 | Baby Care
+Blankets & Sleeping Bags x20   |   60 kg | Value:  55 | Shelter
+Portable Water Purifier        |   25 kg | Value:  88 | Water
+Canned Food (mixed box)        |  150 kg | Value:  70 | Food
+Tarpaulin Sheets x10           |   80 kg | Value:  60 | Shelter
+Generator (small portable)     |  120 kg | Value:  65 | Equipment
+Antibiotics & First Aid        |   20 kg | Value:  92 | Medical
+Hygiene Kits x30               |   45 kg | Value:  58 | Hygiene
+Instant Noodles (bulk)         |  100 kg | Value:  50 | Food
+Mosquito Nets x40              |   35 kg | Value:  72 | Health
+Oral Rehydration Salts x100    |   15 kg | Value:  78 | Medical
+Solar Lanterns x20             |   40 kg | Value:  52 | Equipment
+Infant Medicine Kit            |   10 kg | Value:  82 | Medical
+Communication Radio Set        |   15 kg | Value:  75 | Communication
+-------------------------------------------------------------------
+TOTAL: 995/1000 kg (99.5% capacity) | Relief Value: 1162
+Items selected: 16/20 packages</div>
+
+    <h3>Comparison Results</h3>
+    <table>
+        <tr><th>Method</th><th>Value</th><th>Weight Used</th><th>Time</th><th>Optimal?</th></tr>
+        <tr>
+            <td>Dynamic Programming</td>
+            <td><strong>1162</strong></td>
+            <td>995/1000 kg</td>
+            <td>6.917 ms</td>
+            <td><span class="tag tag-yes">YES</span></td>
+        </tr>
+        <tr>
+            <td>Greedy</td>
+            <td>1157</td>
+            <td>955/1000 kg</td>
+            <td>7.007 ms</td>
+            <td><span class="tag tag-no">NO</span></td>
+        </tr>
+        <tr>
+            <td>Brute Force</td>
+            <td><strong>1162</strong></td>
+            <td>995/1000 kg</td>
+            <td>197.600 ms</td>
+            <td><span class="tag tag-yes">YES</span></td>
+        </tr>
+    </table>
+
+    <div class="highlight-box">
+        <strong>Key Finding:</strong> Greedy missed 5 relief value points (could mean a village doesn't receive critical medical supplies). 
+        DP achieves the same optimal result as brute force but ~28x faster. For larger datasets, brute force becomes infeasible 
+        while DP remains practical.
+    </div>
+</section>
+
+<!-- SECTION 8: Analysis -->
+<section id="analysis">
+    <h2><span class="num">08</span> Algorithm Analysis</h2>
+    
+    <h3>Correctness Proof</h3>
+    <p>
+        The algorithm is correct by induction on the number of items considered.
+    </p>
+    <p>
+        <strong>Base case:</strong> dp[0][w] = 0 for all w. With zero items, the maximum value is correctly zero.
+    </p>
+    <p>
+        <strong>Inductive step:</strong> Assume dp[i-1][w] correctly stores the optimal value for items 1..i-1 with capacity w. 
+        For item i, there are exactly two possibilities: (1) item i is not in the optimal solution &mdash; then dp[i][w] = dp[i-1][w], 
+        which is correct by hypothesis; (2) item i is in the optimal solution &mdash; then dp[i][w] = value[i] + dp[i-1][w - weight[i]], 
+        which is correct because the remaining items must be optimally chosen for the remaining capacity (optimal substructure). 
+        Taking the max of both options guarantees correctness.
+    </p>
+    <p>
+        <strong>Termination:</strong> The outer loop runs exactly n iterations, the inner loop runs exactly W+1 iterations. 
+        The algorithm always terminates.
+    </p>
+
+    <h3>Time Complexity</h3>
+    <table>
+        <tr><th>Case</th><th>Complexity</th><th>Explanation</th></tr>
+        <tr>
+            <td>Best Case</td>
+            <td>&Theta;(nW)</td>
+            <td>The entire table must always be filled regardless of input. No early termination possible.</td>
+        </tr>
+        <tr>
+            <td>Average Case</td>
+            <td>&Theta;(nW)</td>
+            <td>Same as best case &mdash; every cell is computed exactly once via the nested loops.</td>
+        </tr>
+        <tr>
+            <td>Worst Case</td>
+            <td>&Theta;(nW)</td>
+            <td>Same as best case. The algorithm is deterministic and input-independent in its loop structure.</td>
+        </tr>
+    </table>
+    <p>
+        For our scenario: &Theta;(20 &times; 1000) = &Theta;(20,000) operations &mdash; trivially fast for modern hardware.
+    </p>
+
+    <h3>Space Complexity</h3>
+    <p>
+        <strong>&Theta;(nW)</strong> for the DP table. Can be optimized to &Theta;(W) using a 1D rolling array, 
+        but this sacrifices the ability to traceback which items were selected.
+    </p>
+
+    <h3>Growth of Function Comparison</h3>
+    <table>
+        <tr><th>Algorithm</th><th>Time</th><th>Space</th><th>n=20</th><th>n=100</th><th>n=1000</th></tr>
+        <tr>
+            <td>DP (0/1 Knapsack)</td>
+            <td>O(nW)</td>
+            <td>O(nW)</td>
+            <td>20,000</td>
+            <td>100,000</td>
+            <td>1,000,000</td>
+        </tr>
+        <tr>
+            <td>Greedy</td>
+            <td>O(n log n)</td>
+            <td>O(n)</td>
+            <td>86</td>
+            <td>664</td>
+            <td>9,966</td>
+        </tr>
+        <tr>
+            <td>Brute Force</td>
+            <td>O(2<sup>n</sup>)</td>
+            <td>O(n)</td>
+            <td>1,048,576</td>
+            <td>1.27 &times; 10<sup>30</sup></td>
+            <td>&infin;</td>
+        </tr>
+    </table>
+
+    <div class="highlight-box">
+        DP is the sweet spot: it guarantees optimality like brute force but with polynomial-like growth for practical W values. 
+        Greedy is faster but sacrifices correctness. Brute force is infeasible beyond ~25 items.
+    </div>
+
+    <h3>Recurrence Analysis (Master Theorem Not Applicable)</h3>
+    <p>
+        The recurrence T(n, W) = T(n-1, W) + T(n-1, W-w_i) + O(1) without memoization leads to exponential time. 
+        DP eliminates this by storing each subproblem result in the table, reducing the total number of unique subproblems 
+        to n &times; W, each solved in O(1). This is why DP achieves O(nW) &mdash; pseudo-polynomial time.
+    </p>
+</section>
+
+<!-- SECTION 9: Reflection -->
+<section id="reflection">
+    <h2><span class="num">09</span> Reflection &amp; Learning Outcomes</h2>
+
+    <h3>How Our Understanding Changed</h3>
+    <p>
+        When we first encountered the topic of algorithm paradigms in CSC4202, we viewed them as isolated techniques &mdash; 
+        sorting is for ordering, greedy is for quick decisions, DP is for table-filling. This project changed that perspective 
+        entirely. By modelling a real disaster scenario and testing multiple approaches against each other, we learned that 
+        choosing the right paradigm is itself a design decision with real consequences. The greedy algorithm's 5-point shortfall 
+        might seem small on paper, but in the context of flood relief it could mean a village missing critical medicine.
+    </p>
+
+    <div class="reflection-quote">
+        "Before this project, I thought greedy algorithms were 'good enough' for most problems. Running it against DP on our 
+        flood data and seeing it miss the optimal solution by 5 value points made me realise that 'close to optimal' can still 
+        mean life-or-death consequences in real applications."
+        <span class="quote-author">&mdash; Fawzia Moradi, Algorithm Design &amp; Analysis</span>
+    </div>
+
+    <h3>Our Journey: Week by Week</h3>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="week-label">Week 10 &mdash; Problem Definition</div>
+            <p>We brainstormed several disaster scenarios and settled on the Kelantan flood because of its personal relevance &mdash; 
+            some of us had family affected by the 2014 floods. Translating a human crisis into mathematical variables (weights, values, constraints) 
+            felt uncomfortable at first, but we realised that formalising the problem is exactly how algorithms can help save lives.</p>
+        </div>
+        <div class="timeline-item">
+            <div class="week-label">Week 11 &mdash; Algorithm Selection</div>
+            <p>We debated extensively between greedy and DP. The greedy approach was tempting because of its simplicity and speed. 
+            It was only after we built a small test case with 6 items and found that greedy missed the optimal combination that we 
+            committed to DP. This hands-on comparison taught us more about the greedy-choice property (and its limitations) than 
+            any textbook example had.</p>
+        </div>
+        <div class="timeline-item">
+            <div class="week-label">Week 12 &mdash; Implementation</div>
+            <p>Translating the recurrence relation into working Java code was more challenging than expected. Our first implementation 
+            had an off-by-one error in the traceback function that caused it to skip the first item. Debugging this forced us to 
+            truly understand how the DP table indices map to the original item array &mdash; a detail that's easy to overlook 
+            when reading pseudocode.</p>
+        </div>
+        <div class="timeline-item">
+            <div class="week-label">Week 13 &mdash; Analysis &amp; Testing</div>
+            <p>Writing the correctness proof by induction was the most intellectually demanding part. We had to reason carefully 
+            about why the max of include/exclude truly captures the optimal decision. Running all three algorithms and comparing 
+            execution times made the theoretical complexity classes (O(nW) vs O(2<sup>n</sup>)) feel concrete &mdash; watching brute 
+            force take 28&times; longer on just 20 items drove home why exponential growth is impractical.</p>
+        </div>
+        <div class="timeline-item">
+            <div class="week-label">Week 14 &mdash; Portfolio &amp; Presentation</div>
+            <p>Building the portfolio pushed us to explain our work clearly enough for someone outside the course to understand. 
+            This process revealed gaps in our own understanding &mdash; if we couldn't explain a concept simply, we hadn't 
+            fully grasped it ourselves. The portfolio became a learning tool, not just a submission requirement.</p>
+        </div>
+    </div>
+
+    <h3>Connecting to Previous Learning</h3>
+    <p>
+        This project drew on concepts from across the entire CSC4202 syllabus. The sorting algorithms we studied in early weeks 
+        appeared as a preprocessing step in our greedy approach (sorting items by value-to-weight ratio). The divide-and-conquer 
+        paradigm helped us understand the recursive structure of the knapsack problem before we applied memoization to convert 
+        it into DP. Even graph algorithms, which we concluded were unsuitable for this problem, informed our analysis &mdash; 
+        understanding why a paradigm does <em>not</em> fit is as valuable as knowing when it does.
+    </p>
+    <p>
+        Beyond CSC4202, we applied skills from our programming courses (Java, object-oriented design), discrete mathematics 
+        (proof by induction), and even data structures (2D arrays, ArrayLists, sorting with Comparators). The project showed 
+        us that algorithm design is not an isolated discipline &mdash; it sits at the intersection of mathematics, programming, 
+        and real-world problem solving.
+    </p>
+
+    <h3>Key Takeaways</h3>
+    <div class="card-grid">
+        <div class="card">
+            <h4>Optimality Matters</h4>
+            <p>A "nearly correct" answer is not acceptable when lives depend on it. DP's guarantee of optimality is what makes it the right choice for critical resource allocation, even if greedy is faster.</p>
+        </div>
+        <div class="card">
+            <h4>Theory Meets Practice</h4>
+            <p>The gap between understanding a recurrence on a whiteboard and implementing it in bug-free code is significant. This project bridged that gap and made us better programmers and analysts.</p>
+        </div>
+        <div class="card">
+            <h4>Collaboration is Essential</h4>
+            <p>Dividing work across algorithm design, implementation, and documentation forced us to communicate precisely about technical concepts. Explaining DP to a teammate who then had to code it caught errors early.</p>
+        </div>
+    </div>
+
+    <div class="reflection-quote">
+        "The moment the brute force result matched our DP output, I felt genuine relief &mdash; it confirmed our implementation 
+        was correct. But seeing it take 197ms versus DP's 6.9ms on only 20 items made me think: what if there were 50 supply types? 
+        500? That's when the importance of algorithmic efficiency stopped being an exam topic and became something I actually care about."
+        <span class="quote-author">&mdash; Dawood Nadeem, Java Implementation &amp; Testing</span>
+    </div>
+
+    <div class="reflection-quote">
+        "Designing the portfolio forced me to look at our project from an outsider's perspective. I kept asking myself: 
+        would someone who has never studied algorithms understand this? That question pushed me to restructure explanations, 
+        simplify diagrams, and rewrite paragraphs multiple times. In the end, teaching through the portfolio taught me more 
+        about DP than studying for the midterm ever did &mdash; because you cannot explain what you do not truly understand."
+        <span class="quote-author">&mdash; Zeng Lixin, Portfolio &amp; Presentation</span>
+    </div>
+
+    <h3>Future Applications</h3>
+    <p>
+        This project has expanded our view of where algorithm design applies beyond the classroom. The 0/1 Knapsack model 
+        could be extended to multi-truck fleet allocation (multiple knapsacks), time-dependent relief where item values change 
+        as hours pass (dynamic value functions), or multi-objective optimisation balancing value, coverage area, and fairness 
+        across villages. We are now more confident in identifying real-world problems that can be modelled as optimisation 
+        problems and selecting the appropriate algorithmic paradigm to solve them.
+    </p>
+</section>
+
+<!-- SECTION 10: Team -->
+<section id="team">
+    <h2><span class="num">10</span> Team Members</h2>
+    <div class="member-grid">
+        <div class="member">
+            <img class="avatar" src="images/fawzia.jpeg" alt="Fawzia Moradi">
+            <div class="name">Fawzia Moradi</div>
+            <div class="role">Algorithm Design & Analysis</div>
+        </div>
+        <div class="member">
+            <img class="avatar" src="images/dawood.jpeg" alt="Dawood Nadeem">
+            <div class="name">Dawood Nadeem</div>
+            <div class="role">Java Implementation & Testing</div>
+        </div>
+        <div class="member">
+            <img class="avatar" src="images/zeng.jpeg" alt="Zeng Lixin">
+            <div class="name">Zeng Lixin</div>
+            <div class="role">Portfolio & Presentation</div>
+        </div>
+    </div>
+    <p style="text-align:center; color: var(--text-dim); margin-top: 20px;">
+        <em>Group Name: First Call &middot; CSC4202 &middot; Semester 2, 2025/2026</em>
+    </p>
+</section>
+
+</main>
+
+<footer>
+    <p>&copy; 2026 Group First Call &middot; CSC4202 Design and Analysis of Algorithm &middot; UPM</p>
+</footer>
+
+</body>
+</html>
