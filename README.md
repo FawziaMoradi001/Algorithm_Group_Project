@@ -164,6 +164,32 @@ Built as a single Java file (`FloodReliefOptimizer.java`, JDK 21) that implement
 - **DP table** — 2D array `dp[21][1001]`; each cell computed in O(1); traceback walks backward to recover the selected items
 - **Timing** — `System.nanoTime()` used for precise execution measurement, with a formatted comparison table printed at the end
 
+## 🧪 Implementation & Testing Notes
+
+`FloodReliefOptimizer.java` is a single-file program (JDK 21) that runs all three algorithms — DP, Greedy, and Brute Force — back-to-back on the **same 20-package dataset** in one execution, rather than relying on a separate unit-test suite. This design was intentional: it makes correctness and performance directly comparable on every run instead of trusting each algorithm in isolation.
+
+**How correctness is validated:**
+- The DP result is cross-checked against an **exhaustive brute-force search of all 2²⁰ = 1,048,576 subsets**. If the two ever disagreed, that would immediately signal a bug in the DP transition or traceback — they matched exactly (value 1,162, weight 995 kg, same 16 items).
+- The **Greedy** result is deliberately included as a "wrong answer" baseline — since it's *not* guaranteed optimal for 0/1 Knapsack, seeing it fall short (1,157 vs. 1,162) is itself a correctness signal, not a bug.
+- **Execution timing** is measured with `System.nanoTime()` around each solver call, so the O(nW) vs. O(2ⁿ) growth isn't just theoretical — it's observed directly (3.4 ms vs. 382 ms on this dataset).
+
+**A real bug we caught this way:** an early version had an off-by-one error in `traceback()` that silently skipped item index 1. Because the brute-force cross-check is built into every run, the mismatch surfaced immediately instead of hiding in a plausible-looking but wrong output.
+
+**Sample console output:**
+```
+=========================================================================================
+  COMPARISON SUMMARY
+=========================================================================================
+Method                    |      Value |     Weight |    Time (ms) | Optimal?
+-----------------------------------------------------------------------------------------
+Dynamic Programming       |       1162 |     995 kg |      3.407 ms | YES
+Greedy                    |       1157 |     955 kg |      2.764 ms | NO
+Brute Force                |       1162 |     995 kg |    382.103 ms | YES
+
+Greedy missed 5 relief value points compared to DP optimal!
+This demonstrates why DP is superior for this problem.
+```
+
 ## 📈 Results Summary
 
 | | Dynamic Programming | Greedy | Brute Force |
