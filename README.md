@@ -251,11 +251,30 @@ java FloodReliefOptimizer
 
 ## 👥 Team — "Relief Optimizer"
 
-| Name | Matric No. | Role |
-|---|---|---|
-| Fawzia Moradi | 226553 | Algorithm Design & Analysis |
-| Dawood Nadeem | 226920 | Java Implementation & Testing |
-| Zeng Lixin | 218617 | Portfolio & Presentation |
+<table align="center">
+  <tr>
+    <td align="center" width="200">
+      <img src="images/fawzia_avatar.png" width="120" height="120"><br>
+      <b>Fawzia Moradi</b><br>
+      <sub>226553</sub><br>
+      Algorithm Design & Analysis
+    </td>
+    <td align="center" width="200">
+      <img src="images/dawood_avatar.png" width="120" height="120"><br>
+      <b>Dawood Nadeem</b><br>
+      <sub>226920</sub><br>
+      Java Implementation & Testing
+    </td>
+    <td align="center" width="200">
+      <img src="images/zeng_avatar.png" width="120" height="120"><br>
+      <b>Zeng Lixin</b><br>
+      <sub>218617</sub><br>
+      Portfolio & Presentation
+    </td>
+  </tr>
+</table>
+
+<p align="center"><em>Group Name: Relief Optimizer · CSC4202 · Semester 2, 2025/2026</em></p>
 
 ## 📚 References
 
