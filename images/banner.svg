@@ -1,0 +1,76 @@
+<svg viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c1929"/>
+      <stop offset="50%" stop-color="#1a1040"/>
+      <stop offset="100%" stop-color="#0d2137"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.02"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  <circle cx="230" cy="130" r="220" fill="url(#glow1)"/>
+  <circle cx="980" cy="300" r="240" fill="url(#glow2)"/>
+
+  <!-- faint DP grid motif, top right -->
+  <g opacity="0.35" stroke="#2a3a52" stroke-width="1">
+    <g transform="translate(860,40)">
+      <rect x="0" y="0" width="34" height="34" fill="none"/>
+      <rect x="34" y="0" width="34" height="34" fill="none"/>
+      <rect x="68" y="0" width="34" height="34" fill="none"/>
+      <rect x="102" y="0" width="34" height="34" fill="none"/>
+      <rect x="136" y="0" width="34" height="34" fill="none"/>
+      <rect x="0" y="34" width="34" height="34" fill="none"/>
+      <rect x="34" y="34" width="34" height="34" fill="#38bdf8" fill-opacity="0.18"/>
+      <rect x="68" y="34" width="34" height="34" fill="#38bdf8" fill-opacity="0.30"/>
+      <rect x="102" y="34" width="34" height="34" fill="none"/>
+      <rect x="136" y="34" width="34" height="34" fill="none"/>
+      <rect x="0" y="68" width="34" height="34" fill="none"/>
+      <rect x="34" y="68" width="34" height="34" fill="none"/>
+      <rect x="68" y="68" width="34" height="34" fill="#818cf8" fill-opacity="0.25"/>
+      <rect x="102" y="68" width="34" height="34" fill="#818cf8" fill-opacity="0.40"/>
+      <rect x="136" y="68" width="34" height="34" fill="none"/>
+    </g>
+  </g>
+
+  <!-- gentle water waves along the bottom -->
+  <path d="M0,360 C150,330 250,390 400,360 C550,330 650,390 800,360 C950,330 1050,390 1200,360 L1200,400 L0,400 Z" fill="url(#waveGrad)"/>
+  <path d="M0,375 C150,350 250,400 400,375 C550,350 650,400 800,375 C950,350 1050,400 1200,375 L1200,400 L0,400 Z" fill="#34d399" fill-opacity="0.08"/>
+
+  <!-- eyebrow -->
+  <text x="600" y="120" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" letter-spacing="4" fill="#94a3b8">CSC4202 · DESIGN AND ANALYSIS OF ALGORITHMS</text>
+
+  <!-- title -->
+  <text x="600" y="185" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="46" font-weight="700" fill="url(#titleGrad)">Flood Relief Supply</text>
+  <text x="600" y="240" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="46" font-weight="700" fill="url(#titleGrad)">Allocation Optimizer</text>
+
+  <!-- subtitle -->
+  <text x="600" y="278" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#94a3b8">Dynamic Programming &#183; 0/1 Knapsack &#183; Kuala Krai, Kelantan</text>
+
+  <!-- pill row -->
+  <g font-family="Georgia, serif" font-size="13" fill="#e2e8f0">
+    <rect x="405" y="305" width="98" height="30" rx="15" fill="#111827" stroke="#2a3a52"/>
+    <text x="454" y="325" text-anchor="middle">Java</text>
+
+    <rect x="513" y="305" width="98" height="30" rx="15" fill="#111827" stroke="#2a3a52"/>
+    <text x="562" y="325" text-anchor="middle">HTML5</text>
+
+    <rect x="621" y="305" width="150" height="30" rx="15" fill="#111827" stroke="#2a3a52"/>
+    <text x="696" y="325" text-anchor="middle">GitHub Pages</text>
+  </g>
+</svg>

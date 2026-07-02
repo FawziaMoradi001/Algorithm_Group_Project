@@ -10,10 +10,10 @@ A Dynamic Programming solution to a real-world disaster relief scenario: optimal
 ![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-222?style=flat-square&logo=githubpages)
 
 <a href="https://fawziamoradi001.github.io/Algorithm_Group_Project/">
-  <img src="https://s0.wp.com/mshots/v1/https%3A%2F%2Ffawziamoradi001.github.io%2FAlgorithm_Group_Project%2F?w=1200" alt="Live site preview" width="100%">
+  <img src="images/banner.svg" alt="Flood Relief Supply Allocation Optimizer" width="100%">
 </a>
 
-<p align="center"><em>👆 Click the preview to open the live site</em></p>
+<p align="center"><em>👆 Click the banner to open the live site</em></p>
 
 ---
 
