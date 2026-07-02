@@ -4,7 +4,16 @@
 
 A Dynamic Programming solution to a real-world disaster relief scenario: optimally allocating limited emergency supplies to flood-affected villages, inspired by the 2014 Kelantan floods in Kuala Krai, Malaysia.
 
-🔗 **[View the live project site »](https://fawziamoradi001.github.io/Algorithm_Group_Project/)**
+[![Live Demo](https://img.shields.io/badge/🔴_LIVE_DEMO-View_Site-38bdf8?style=for-the-badge)](https://fawziamoradi001.github.io/Algorithm_Group_Project/)
+![Java](https://img.shields.io/badge/Java-DP_Algorithm-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-Site-E34F26?style=flat-square&logo=html5&logoColor=white)
+![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-222?style=flat-square&logo=githubpages)
+
+<a href="https://fawziamoradi001.github.io/Algorithm_Group_Project/">
+  <img src="https://s0.wp.com/mshots/v1/https%3A%2F%2Ffawziamoradi001.github.io%2FAlgorithm_Group_Project%2F?w=1200" alt="Live site preview" width="100%">
+</a>
+
+<p align="center"><em>👆 Click the preview to open the live site</em></p>
 
 ---
 
