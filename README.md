@@ -251,30 +251,32 @@ java FloodReliefOptimizer
 
 ## 👥 Team — "Relief Optimizer"
 
-<table align="center">
+<div align="center">
+<table border="0" cellspacing="0" cellpadding="18">
   <tr>
-    <td align="center" width="200">
-      <img src="images/fawzia_avatar.png" width="120" height="120"><br>
+    <td align="center" width="190">
+      <img src="images/fawzia_avatar.png" width="110" height="110"><br><br>
       <b>Fawzia Moradi</b><br>
       <sub>226553</sub><br>
-      Algorithm Design & Analysis
+      <sub>Algorithm Design &amp;<br>Analysis</sub>
     </td>
-    <td align="center" width="200">
-      <img src="images/dawood_avatar.png" width="120" height="120"><br>
+    <td align="center" width="190">
+      <img src="images/dawood_avatar.png" width="110" height="110"><br><br>
       <b>Dawood Nadeem</b><br>
       <sub>226920</sub><br>
-      Java Implementation & Testing
+      <sub>Java Implementation &amp;<br>Testing</sub>
     </td>
-    <td align="center" width="200">
-      <img src="images/zeng_avatar.png" width="120" height="120"><br>
+    <td align="center" width="190">
+      <img src="images/zeng_avatar.png" width="110" height="110"><br><br>
       <b>Zeng Lixin</b><br>
       <sub>218617</sub><br>
-      Portfolio & Presentation
+      <sub>Portfolio &amp;<br>Presentation</sub>
     </td>
   </tr>
 </table>
 
-<p align="center"><em>Group Name: Relief Optimizer · CSC4202 · Semester 2, 2025/2026</em></p>
+<em>Group Name: Relief Optimizer · CSC4202 · Semester 2, 2025/2026</em>
+</div>
 
 ## 📚 References
 
